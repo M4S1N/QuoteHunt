@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
-using QuoteHuntWebAPI.Services;
-using QuoteHuntWebAPI.Services.Interfaces;
+using QuoteHuntScraper.Services;
+using QuoteHuntScraper.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 
 #region Services
 builder.Services.AddScoped<IScraperService, ScraperService>();
+builder.Services.AddScoped<IWebDriverFactory, WebDriverFactory>();
 #endregion
 
 var app = builder.Build();

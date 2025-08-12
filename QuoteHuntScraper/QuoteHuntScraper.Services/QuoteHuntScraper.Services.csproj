@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuoteHuntWebAPI.DTO\QuoteHuntWebAPI.DTO.csproj" />
+    <ProjectReference Include="..\QuoteHuntScraper.DTO\QuoteHuntScraper.DTO.csproj" />
   </ItemGroup>
 
 </Project>

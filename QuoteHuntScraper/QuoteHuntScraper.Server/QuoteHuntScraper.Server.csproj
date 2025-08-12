@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuoteHuntWebAPI.Services\QuoteHuntWebAPI.Services.csproj" />
+    <ProjectReference Include="..\QuoteHuntScraper.Services\QuoteHuntScraper.Services.csproj" />
   </ItemGroup>
 
 </Project>
