@@ -1,17 +1,27 @@
-﻿using QuoteHuntScraper.Services.Interfaces;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
+using Microsoft.Extensions.Options;
+
 using QuoteHuntScraper.DTO;
-using OpenQA.Selenium;
+using QuoteHuntScraper.Services.Interfaces;
+
 namespace QuoteHuntScraper.Services
 {
     public class ScraperService(
-        ILogger<ScraperService> logger
+        ILogger<ScraperService> logger,
+        IOptions<ScraperSetting> scraperSettings
     ) : IScraperService
     {
         public readonly ILogger<ScraperService> _logger = logger;
+        public readonly ScraperSetting _scraperSettings = scraperSettings.Value;
 
-        public Task<List<QuoteDTO>> ScrapeQuotes(IWebDriver driver, int page, List<string> tags)
+        public Task<List<QuoteDTO>> ScrapeQuotes(IWebDriver driver, int page, string tag)
         {
-            driver.Navigate().GoToUrl($"https://quotes.toscrape.com/page/{page}/");
+            string tagPath = string.IsNullOrEmpty(tag) ? "" : $"tag/{tag}/";
+            string url = $"{_scraperSettings.Url}/{tagPath}page/{page}/";
+
+            driver.Navigate().GoToUrl(url);
 
             var quotesElements = driver.FindElements(By.CssSelector(".quote"));
             return Task.FromResult(quotesElements.Select(element => new QuoteDTO
@@ -21,12 +31,17 @@ namespace QuoteHuntScraper.Services
                 Tags = [.. element.FindElements(By.CssSelector(".tags .tag")).Select(t => t.Text)]
             }).ToList());
         }
-        public void Login(IWebDriver driver, string username, string password)
+        public void Login(IWebDriver driver)
         {
-            driver.Navigate().GoToUrl("https://quotes.toscrape.com/login");
-            driver.FindElement(By.Id("username")).SendKeys(username);
-            driver.FindElement(By.Id("password")).SendKeys(password);
-            driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+            var loginUrl = $"{_scraperSettings.Url}/login";
+
+            driver.Navigate().GoToUrl(loginUrl);
+            driver.FindElement(By.Id("username")).SendKeys(_scraperSettings.Username);
+            driver.FindElement(By.Id("password")).SendKeys(_scraperSettings.Password);
+
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+            var loginButton = wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("input[type='submit']")));
+            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].click();", loginButton);
         }
     }
 }

@@ -21,22 +21,23 @@ namespace QuoteHuntScraper.Server.Controllers
         [HttpGet("quotes")]
         public async Task<IActionResult> GetQuote(
             [FromQuery] int? page,
-            [FromQuery] IEnumerable<string>? tags,
+            [FromQuery] string? tag,
             CancellationToken cancellationToken = default
         )
         {
             try
             {
-                page ??= 1;
-                tags ??= [];
-
-                _logger.LogInformation("Scraping quotes from page {Page} with tags: {Tags}", page, string.Join(", ", tags));
                 var webDriverFactory = _webDriverFactory.CreateWebDriver();
+                _scraperService.Login(webDriverFactory);
+
+                page ??= 1; tag ??= "";
+                _logger.LogInformation("Scraping quotes from page {Page} with tag: {Tag}", page, tag);
+
                 using var driver = webDriverFactory;
-                var quotes = await _scraperService.ScrapeQuotes(driver, page.Value, [.. tags]);
+                var quotes = await _scraperService.ScrapeQuotes(driver, page.Value, tag);
                 if (quotes == null || quotes.Count == 0)
                 {
-                    _logger.LogWarning("No quotes found on page {Page} with tags: {Tags}", page, string.Join(", ", tags));
+                    _logger.LogWarning("Scraping quotes from page {Page} with tag: {Tags}", page, tag);
                     return NotFound("No quotes found.");
                 }
                 _logger.LogInformation("Successfully scraped {Count} quotes from page {Page}.", quotes.Count, page);
