@@ -1,4 +1,6 @@
 using QuoteHuntWebAPI.DTO;
+using QuoteHuntWebAPI.Services;
+using QuoteHuntWebAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ScraperSetting>(
     builder.Configuration.GetSection("ScraperSettings")
 );
+
+#region Services
+builder.Services.AddHttpClient<HttpScraperClient>();
+builder.Services.AddScoped<IScraperClient, HttpScraperClient>();
+#endregion
 
 var app = builder.Build();
 
