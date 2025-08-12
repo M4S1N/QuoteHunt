@@ -7,7 +7,7 @@ namespace QuoteHuntScraper.Server.Controllers
     /// Controller for quote scraper
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("internal/[controller]")]
     public class ScraperController(
         ILogger<ScraperController> logger,
         IWebDriverFactory webDriverFactory,
@@ -18,7 +18,7 @@ namespace QuoteHuntScraper.Server.Controllers
         private readonly IWebDriverFactory _webDriverFactory = webDriverFactory;
         private readonly IScraperService _scraperService = scraperService;
 
-        [HttpGet("/internal/quotes")]
+        [HttpGet("quotes")]
         public async Task<IActionResult> GetQuote(
             [FromQuery] int? page,
             [FromQuery] IEnumerable<string>? tags,
@@ -47,6 +47,11 @@ namespace QuoteHuntScraper.Server.Controllers
                 _logger.LogError(ex, "An error occurred while scraping quotes.");
                 return StatusCode(500, "Internal server error");
             }
+        }
+        [HttpGet("health")]
+        public IActionResult HealthCheck()
+        {
+            return Ok("Scraper service is running.");
         }
     }
 }
