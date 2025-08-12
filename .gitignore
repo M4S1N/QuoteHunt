@@ -10,3 +10,8 @@ QuoteHuntScraper/QuoteHuntScraper.Services/QuoteHuntScraper.Services.csproj.user
 QuoteHuntScraper/QuoteHuntScraper.DTO/bin/
 QuoteHuntScraper/QuoteHuntScraper.DTO/obj/
 QuoteHuntScraper/QuoteHuntScraper.DTO/QuoteHuntScraper.DTO.csproj.user
+
+QuoteHuntWebAPI/.vs/
+QuoteHuntWebAPI/QuoteHuntWebAPI.Server/bin/
+QuoteHuntWebAPI/QuoteHuntWebAPI.Server/obj/
+QuoteHuntWebAPI/QuoteHuntWebAPI.Server/QuoteHuntWebAPI.Server.csproj.user
