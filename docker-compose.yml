@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  webscraper:
+    build:
+      context: ./QuoteHuntScraper
+    container_name: quotehunt.webscraper
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge

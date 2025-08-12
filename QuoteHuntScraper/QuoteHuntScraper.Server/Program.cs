@@ -13,18 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var envPath = Path.Combine(
-    Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).FullName).FullName,
-    ".env"
-);
-Env.Load(envPath);
-
 builder.Services.Configure<ScraperSetting>(options =>
 {
-    options.Url = Environment.GetEnvironmentVariable("SCRAPER_URL") ?? string.Empty;
-    options.Username = Environment.GetEnvironmentVariable("SCRAPER_USERNAME") ?? "user";
-    options.Password = Environment.GetEnvironmentVariable("SCRAPER_PASSWORD") ?? "password";
+    options.Url = builder.Configuration["SCRAPER_URL"] ?? string.Empty;
+    options.Username = builder.Configuration["SCRAPER_USERNAME"] ?? "user";
+    options.Password = builder.Configuration["SCRAPER_PASSWORD"] ?? "password";
 });
+
+builder.Configuration.AddEnvironmentVariables();
 
 #region Services
 builder.Services.AddScoped<IScraperService, ScraperService>();
