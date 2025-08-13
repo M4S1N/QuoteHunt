@@ -25,7 +25,8 @@ namespace QuoteHuntWebAPI.Services
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
 
-                var response = await _httpClient.GetAsync(Routes.GetQuote(page, tag), timeoutCts.Token);
+                string url = Routes.GetQuote(page, tag);
+                var response = await _httpClient.GetAsync(url, timeoutCts.Token);
                 response.EnsureSuccessStatusCode();
 
                 var quotes = await response.Content.ReadFromJsonAsync<List<QuoteDTO>>(cancellationToken: cancellationToken);

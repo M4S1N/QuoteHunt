@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using QuoteHuntWebAPI.DTO;
+using QuoteHuntWebAPI.Services.Interfaces;
 
 namespace QuoteHuntWebAPI.Server.Controllers
 {
@@ -9,10 +10,38 @@ namespace QuoteHuntWebAPI.Server.Controllers
     [ApiController]
     public class QuoteController(
         ILogger<QuoteController> logger,
-        IOptions<ScraperSetting> scraperSetting
+        IOptions<ScraperSetting> scraperSetting,
+        IScraperClient scraperClient
     ) : ControllerBase
     {
         public readonly ILogger<QuoteController> _logger = logger;
         public readonly ScraperSetting _scraperSetting = scraperSetting.Value;
+        public readonly IScraperClient _scraperClient = scraperClient;
+
+        [HttpGet]
+        public async Task<IActionResult> GetQuotes(
+            [FromQuery] int page = 1,
+            [FromQuery] string tag = "",
+            CancellationToken cancellationToken = default
+        )
+        {
+            try
+            {
+                _logger.LogInformation("Fetching quotes from scraper at {ScraperUrl}", _scraperSetting.ScraperUrl);
+                
+                var quotes = await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
+                
+                if (quotes == null)
+                {
+                    return NotFound("No quotes found.");
+                }
+                return Ok(quotes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching quotes");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+        }
     }
 }

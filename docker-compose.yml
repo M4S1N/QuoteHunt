@@ -8,6 +8,15 @@ services:
     networks:
       - internal_network
 
+  webapi:
+    build:
+      context: ./QuoteHuntWebAPI
+    container_name: quotehunt.webapi
+    ports:
+      - "5208:5208"
+    networks:
+      - internal_network
+
 networks:
   internal_network:
     driver: bridge

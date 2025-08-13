@@ -35,7 +35,7 @@ namespace QuoteHuntScraper.Server.Controllers
 
                 using var driver = webDriverFactory;
                 var quotes = await _scraperService.ScrapeQuotes(driver, page.Value, tag);
-                if (quotes == null || quotes.Count == 0)
+                if (quotes == null)
                 {
                     _logger.LogWarning("Scraping quotes from page {Page} with tag: {Tags}", page, tag);
                     return NotFound("No quotes found.");
