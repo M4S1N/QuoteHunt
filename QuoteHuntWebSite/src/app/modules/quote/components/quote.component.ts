@@ -1,43 +1,71 @@
-import { Component, OnInit } from "@angular/core";
-import { QuoteService } from "../services/quote.service";
-import { shareReplay, Subject, switchMap, tap } from "rxjs";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { AsyncPipe, CommonModule } from "@angular/common";
-import { FormDataService } from "@core/services/form-data.service";
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { QuoteCardComponent } from './quote-card/quote-card.component';
+import { map, merge, shareReplay, startWith, Subject, switchMap } from 'rxjs';
+import { QuoteService } from '../services/quote.service';
+import { fadeIn, fadeInCard, fadeInContainer } from '@shared/animations/animations';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
-    selector: 'app-quote',
-    templateUrl: './quote.component.html',
-    styleUrls: ['./quote.component.scss'],
-    imports: [
-        CommonModule,
-    ],
+  selector: 'app-quote',
+  templateUrl: './quote.component.html',
+  styleUrls: ['./quote.component.scss'],
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    QuoteCardComponent,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ReactiveFormsModule
+  ],
+  animations: [
+    fadeInContainer,
+    fadeInCard,
+    fadeIn
+  ]
 })
 export class QuoteComponent {
 
-    readonly requestForm: FormGroup;
-    private readonly getQuotesSubject$ = new Subject<FormData>();
-    readonly quotes$ = this.getQuotesSubject$.pipe(
-        switchMap((formData) => this.quoteService.getQuotes(formData)),
-        shareReplay()
-    );
+  private readonly fb = inject(FormBuilder)
+  readonly requestForm = this.fb.group({
+    page: this.fb.control<string>('1'),
+    tag: this.fb.control<string>(''),
+  });
 
-    constructor(
-        private readonly fb: FormBuilder,
-        private readonly quoteService: QuoteService,
-        private readonly formDataService: FormDataService
-    ) {
-        this.requestForm = this.fb.group({
-            page: this.fb.control<number>(1),
-            tag: this.fb.control<string>(''),
-        });
-    }
+  private readonly quoteSearchSubject$ = new Subject<Partial<{page: string | null, tag: string | null}>>();
+  readonly quotes$ = this.quoteSearchSubject$.pipe(
+    startWith(this.requestForm.value),
+    switchMap((params) => this.quoteService.getQuotes(params.page, params.tag)),
+    shareReplay(),
+  );
 
-    fetchQuotes() {
-        if (this.requestForm.invalid) {
-            console.error('Form is invalid');
-            return;
-        }
-        this.getQuotesSubject$.next(this.formDataService.toFormData(this.requestForm));
+  readonly loading$ = merge(
+    this.quoteSearchSubject$.pipe(map(_ => true)),
+    this.quotes$.pipe(map(_ => false)),
+  ).pipe(startWith(false));
+
+  constructor (
+    private readonly quoteService: QuoteService
+  ) { }
+
+  onTagSearch(tag?: string) {
+    if (!!tag) {
+      this.requestForm.setValue({page: '1', tag: tag});
     }
+    this.quoteSearchSubject$.next(this.requestForm.value)
+  }
+
+  changePage(offset: number) {
+    const current$ = +this.requestForm.controls.page.value! || 1;
+    const next$ = Math.max(1, current$ + offset);
+    this.requestForm.controls.page.setValue(next$.toString());
+    this.quoteSearchSubject$.next(this.requestForm.value)
+  }
+
 }

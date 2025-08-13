@@ -21,11 +21,8 @@ export class QuoteService extends BaseService {
     super(injector);
   }
 
-  getQuotes(params: FormData): Observable<Quote[]> {
-    return this.get(this.urlService.getQuote(
-      params.get("page")!.toString(),
-      params.get("tag")!.toString()
-    )).pipe(
+  getQuotes(page: string | null | undefined, tag: string | null | undefined): Observable<Quote[]> {
+    return this.get(this.urlService.getQuote(page, tag)).pipe(
       map((response: any) => {
         this.snackBar.open("Quotes fetched successfully!", "", { duration: this.environment.snackBarDuration });
         return response as Quote[]

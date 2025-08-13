@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { QuoteComponent } from './modules/quote/components/quote.component';
 
 export const routes: Routes = [
     {

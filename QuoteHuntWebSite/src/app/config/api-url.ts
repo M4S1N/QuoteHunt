@@ -7,9 +7,12 @@ export class UrlService {
 
     constructor() {}
 
-    getQuote = (page: string = "1", tag?: string): string => {
-        let url = `api/Quote?page=${page}`;
-        if (tag) {
+    getQuote = (page?: string | null, tag?: string | null): string => {
+        let url = `api/Quote`;
+        if (!!page) {
+            url += `?page=${page}`;
+        }
+        if (!!tag) {
             url += `&tag=${tag}`;
         }
         return url;

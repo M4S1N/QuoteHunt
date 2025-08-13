@@ -1,0 +1,18 @@
+<mat-card class="quote-card">
+  <mat-card-content>
+    <p class="quote-text">{{ quote.text }}</p>
+    <p class="quote-author">- {{ quote.author }}</p>
+
+    <mat-chip-listbox aria-label="Quote tags" class="quote-tags">
+      <mat-chip-option
+        *ngFor="let tag of quote.tags"
+        (click)="onTagClick.emit(tag)"
+        color="primary"
+        selected="false"
+        class="clickable-chip"
+      >
+        {{ tag }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </mat-card-content>
+</mat-card>
