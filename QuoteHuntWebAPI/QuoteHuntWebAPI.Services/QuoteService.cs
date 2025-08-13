@@ -9,20 +9,25 @@ namespace QuoteHuntWebAPI.Services
     public class QuoteService(
         ILogger<QuoteService> logger,
         IScraperClient scraperClient,
-        IConnectionMultiplexer redis,
-        IOptions<RedisSetting> redisSettings
+        IOptions<RedisSetting> redisSettings,
+        IConnectionMultiplexer? redis = null
     ) : IQuoteService
     {
         public readonly ILogger<QuoteService> _logger = logger;
         public readonly IScraperClient _scraperClient = scraperClient;
-        public readonly IDatabase _redis = redis.GetDatabase();
+        public readonly IDatabase? _redis = redis?.GetDatabase();
         public readonly RedisSetting _redisSettings = redisSettings.Value;
 
         public async Task<IEnumerable<QuoteDTO>> GetQuotesAsync(int page, string tag, CancellationToken cancellationToken = default)
         {
+            if (!_redisSettings.UseRedis)
+            {
+                return await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
+            }
+
             string cacheKey = $"quotes:page:{page}:tag:{tag}";
 
-            var cached = await _redis.StringGetAsync(cacheKey);
+            var cached = await _redis?.StringGetAsync(cacheKey);
             if (cached.HasValue)
             {
                 return JsonSerializer.Deserialize<IEnumerable<QuoteDTO>>(cached!);
@@ -31,7 +36,7 @@ namespace QuoteHuntWebAPI.Services
             var quotes = await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
 
             var serialized = JsonSerializer.Serialize(quotes);
-            await _redis.StringSetAsync(cacheKey, serialized, TimeSpan.FromSeconds(_redisSettings.CacheTTLSeconds));
+            await _redis?.StringSetAsync(cacheKey, serialized, TimeSpan.FromSeconds(_redisSettings.CacheTTLSeconds));
 
             return quotes;
         }
