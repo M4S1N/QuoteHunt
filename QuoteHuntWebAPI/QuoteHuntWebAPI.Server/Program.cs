@@ -1,6 +1,7 @@
 using QuoteHuntWebAPI.DTO;
 using QuoteHuntWebAPI.Services;
 using QuoteHuntWebAPI.Services.Interfaces;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<ScraperSetting>(
-    builder.Configuration.GetSection("ScraperSettings")
-);
+builder.Services.Configure<ScraperSetting>(builder.Configuration.GetSection("ScraperSettings"));
+builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection("Redis"));
+
+if (builder.Configuration.GetValue<bool>("Redis:UseRedis"))
+{
+    var redisHost = builder.Configuration.GetValue<string>("Redis:Host");
+    var redisPort = builder.Configuration.GetValue<int>("Redis:Port");
+    var redisConnection = $"{redisHost}:{redisPort}";
+    var redis = ConnectionMultiplexer.Connect(redisConnection);
+    builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+}
 
 #region Services
-builder.Services.AddHttpClient<HttpScraperClient>();
-builder.Services.AddScoped<IScraperClient, HttpScraperClient>();
+builder.Services.AddHttpClient<ScraperClient>();
+builder.Services.AddScoped<IScraperClient, ScraperClient>();
+builder.Services.AddScoped<IQuoteService, QuoteService>();
 #endregion
 
 var app = builder.Build();

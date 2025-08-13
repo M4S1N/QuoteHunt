@@ -11,12 +11,12 @@ namespace QuoteHuntWebAPI.Server.Controllers
     public class QuoteController(
         ILogger<QuoteController> logger,
         IOptions<ScraperSetting> scraperSetting,
-        IScraperClient scraperClient
+        IQuoteService quoteService
     ) : ControllerBase
     {
         public readonly ILogger<QuoteController> _logger = logger;
         public readonly ScraperSetting _scraperSetting = scraperSetting.Value;
-        public readonly IScraperClient _scraperClient = scraperClient;
+        public readonly IQuoteService _quoteService = quoteService;
 
         [HttpGet]
         public async Task<IActionResult> GetQuotes(
@@ -29,7 +29,7 @@ namespace QuoteHuntWebAPI.Server.Controllers
             {
                 _logger.LogInformation("Fetching quotes from scraper at {ScraperUrl}", _scraperSetting.ScraperUrl);
                 
-                var quotes = await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
+                var quotes = await _quoteService.GetQuotesAsync(page, tag, cancellationToken);
                 
                 if (quotes == null)
                 {

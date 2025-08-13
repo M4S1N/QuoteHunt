@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\QuoteHuntWebAPI.DTO\QuoteHuntWebAPI.DTO.csproj" />
   </ItemGroup>
 

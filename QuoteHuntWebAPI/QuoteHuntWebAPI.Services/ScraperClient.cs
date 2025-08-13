@@ -5,13 +5,13 @@ using QuoteHuntWebAPI.Services.ApiRoutes;
 
 namespace QuoteHuntWebAPI.Services
 {
-    public class HttpScraperClient(
-        ILogger<HttpScraperClient> logger,
+    public class ScraperClient(
+        ILogger<ScraperClient> logger,
         HttpClient httpClient,
         IOptions<ScraperSetting> scraperSetting
     ): IScraperClient
     {
-        private readonly ILogger<HttpScraperClient> _logger = logger;
+        private readonly ILogger<ScraperClient> _logger = logger;
         private readonly HttpClient _httpClient = new Func<HttpClient>(() =>
         {
             httpClient.BaseAddress = new Uri(scraperSetting.Value.ScraperUrl);
@@ -25,8 +25,7 @@ namespace QuoteHuntWebAPI.Services
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
 
-                string url = Routes.GetQuote(page, tag);
-                var response = await _httpClient.GetAsync(url, timeoutCts.Token);
+                var response = await _httpClient.GetAsync(Routes.GetQuote(page, tag), timeoutCts.Token);
                 response.EnsureSuccessStatusCode();
 
                 var quotes = await response.Content.ReadFromJsonAsync<List<QuoteDTO>>(cancellationToken: cancellationToken);
