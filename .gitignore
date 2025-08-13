@@ -43,8 +43,8 @@ QuoteHuntWebSite/.settings/
 QuoteHuntWebSite/*.sublime-workspace
 
 # Visual Studio Code
-QuoteHuntWebSite/.vscode/*
-QuoteHuntWebSite/.history/*
+QuoteHuntWebSite/.vscode
+QuoteHuntWebSite/.history
 
 # Miscellaneous
 QuoteHuntWebSite/.angular/cache
