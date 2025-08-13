@@ -80,8 +80,6 @@ public class QuoteDTO
 }
 ```
 
----
-
 ## 5. Configuration
 
 ### appsettings.json example
