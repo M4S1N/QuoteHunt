@@ -3,15 +3,20 @@ import { BaseService } from "@core/services/base.service";
 import { UrlService } from "app/config/api-url";
 import { Quote } from "@shared/models/quote.model";
 import { catchError, map, Observable, tap } from "rxjs";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { environment } from "environments/environment";
 
 @Injectable({
   providedIn: "root"
 })
 export class QuoteService extends BaseService {
 
+  private readonly environment = environment
+
   constructor(
     injector: Injector,
-    private readonly urlService: UrlService
+    private readonly urlService: UrlService,
+    private readonly snackBar: MatSnackBar,
   ) {
     super(injector);
   }
@@ -21,9 +26,12 @@ export class QuoteService extends BaseService {
       params.get("page")!.toString(),
       params.get("tag")!.toString()
     )).pipe(
-      map((response: any) => response as Quote[]),
+      map((response: any) => {
+        this.snackBar.open("Quotes fetched successfully!", "", { duration: this.environment.snackBarDuration });
+        return response as Quote[]
+      }),
       catchError(error => {
-        console.error("Error fetching quotes:", error);
+        this.snackBar.open("Failed to fetch quotes. Please try again.", error, { duration: this.environment.snackBarDuration });
         return [];
       })
     );
