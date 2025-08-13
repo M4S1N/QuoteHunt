@@ -1,2 +1,8 @@
 <h1>Hello World!</h1>
 <p>Welcome to the Quote Hunt application!</p>
+<div *ngIf="quotes$ | async as quotes">
+    <h2>Quote of the Day</h2>
+    <p>{{ quotes[0].text }}</p>
+    <p><strong>- {{ quotes[0].author }}</strong></p>
+</div>
+<button (click)="fetchQuotes()">Fetch New Quotes</button>
