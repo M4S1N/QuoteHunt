@@ -1,28 +1,31 @@
 <div *ngIf="quotes$ | async as quotes; else noQuotes" class="quotes-container" [@fadeInContainer]>
   <!-- Filter Section -->
-  <div class="filter-section">
-    <mat-form-field appearance="outline">
-      <mat-label>Filter by Tag</mat-label>
-      <input 
-        matInput
-        placeholder="Enter tag" 
+  <div class="search-bar">
+    <div class="input-container">
+      <input
+        type="text"
+        placeholder="Enter tag"
         [formControl]="requestForm.controls.tag">
-    </mat-form-field>
-  
+      <mat-icon class="search-icon">search</mat-icon>
+    </div>
+
     <button
       mat-raised-button
       color="primary"
       (click)="onTagSearch()"
-      [disabled]="(loading$ | async)">
+      [disabled]="(loading$ | async)"
+      class="search-btn">
       Search
     </button>
   </div>
+
 
   <!-- Quotes Grid -->
   <div class="quotes-grid">
     <app-quote-card
       *ngFor="let quote of quotes"
       [quote]="quote"
+      [tagSelected]="tagSelected"
       (onTagClick)="onTagSearch($event)"
       [@fadeInCard]>
     </app-quote-card>
@@ -38,7 +41,7 @@
       Previous
     </button>
 
-    <span *ngIf="!(loading$ | async)">Page {{ requestForm.controls.page.value }}</span>
+    <span>Page {{ requestForm.controls.page.value }}</span>
 
     <button
       mat-raised-button
@@ -49,6 +52,7 @@
     </button>
   </div>
 </div>
+
 <ng-template #noQuotes>
   <div class="quotes-container">
     <div class="empty-state">

@@ -1,18 +1,25 @@
 <mat-card class="quote-card">
   <mat-card-content>
-    <p class="quote-text">{{ quote.text }}</p>
-    <p class="quote-author">- {{ quote.author }}</p>
+    <span class="tag-label">{{!!tagSelected && tagSelected.length > 0 ? tagSelected : "No tag" }}</span>
+    <div class="text-div">
+      <p class="quote-text">{{ quote.text }}</p>
+    </div>
+    <p class="quote-author">
+      <mat-icon inline style="margin-right:6px;">history_edu</mat-icon> {{ quote.author }}
+    </p>
 
-    <mat-chip-listbox aria-label="Quote tags" class="quote-tags">
-      <mat-chip-option
-        *ngFor="let tag of quote.tags"
-        (click)="onTagClick.emit(tag)"
-        color="primary"
-        selected="false"
-        class="clickable-chip"
-      >
-        {{ tag }}
-      </mat-chip-option>
-    </mat-chip-listbox>
+    <div class="tags-section">
+      <p class="tags-label"><mat-icon inline>local_offer</mat-icon>Tags<p>
+      <mat-chip-listbox aria-label="Quote tags" class="quote-tags">
+        <div class="tags-container">
+          <span
+            *ngFor="let tag of quote.tags"
+            class="clickable-chip"
+            (click)="onTagClick.emit(tag)">
+            {{ tag }}
+          </span>
+        </div>
+      </mat-chip-listbox>
+    </div>
   </mat-card-content>
 </mat-card>

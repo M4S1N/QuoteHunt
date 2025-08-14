@@ -39,6 +39,7 @@ export class QuoteComponent {
     page: this.fb.control<string>('1'),
     tag: this.fb.control<string>(''),
   });
+  tagSelected: string | null = null;
 
   private readonly quoteSearchSubject$ = new Subject<Partial<{page: string | null, tag: string | null}>>();
   readonly quotes$ = this.quoteSearchSubject$.pipe(
@@ -57,9 +58,11 @@ export class QuoteComponent {
   ) { }
 
   onTagSearch(tag?: string) {
+    this.requestForm.controls.page.setValue("1");
     if (!!tag) {
-      this.requestForm.setValue({page: '1', tag: tag});
+      this.requestForm.controls.tag.setValue(tag);
     }
+    this.tagSelected = this.requestForm.controls.tag.value;
     this.quoteSearchSubject$.next(this.requestForm.value)
   }
 
