@@ -25,16 +25,16 @@
       padding: 12px 40px 12px 12px;
       border-radius: 25px;
       border: 2px solid #03054dd5;
-      background: #ffffff1a;
+      background: #ddddddd6;
       color: #000000;
       box-sizing: border-box;
       outline: none;
+      font-size: 1rem;
       height: 48px;
       transition: border 0.3s, background 0.3s;
 
       &:focus {
         border:2px solid #ff9800;
-        background: #ffffff26;
       }
     }
 
@@ -72,7 +72,7 @@
 
     &:disabled {
       background: #0100522c;
-      color: #868686;
+      color: #42415b;
       box-shadow: none;
       cursor: not-allowed;
     }
@@ -87,7 +87,7 @@
   gap: 16px;
   margin: 20px auto;
   padding: 20px;
-  max-width: 1290px;
+  max-width: 1080px;
   flex-wrap: nowrap;
 
   span {
@@ -121,14 +121,13 @@
 
     &:disabled {
       background: #0100522c;
-      color: #868686;
+      color: #42415b;
       box-shadow: none;
       cursor: not-allowed;
     }
   }
 }
 
-// Animación para el número de página
 @keyframes fadeScale {
   0% {
     opacity: 0;
@@ -168,6 +167,12 @@
     height: auto;
     max-width: 150px;
     margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: #333;
+    margin-top: 10px;
   }
 }
 
