@@ -29,6 +29,16 @@ services:
       - REDIS_PORT=6379
     networks:
       - internal_network
+  
+  website:
+    build: ./QuoteHuntWebSite
+    container_name: quotehunt.website
+    ports:
+      - "4200:80"
+    depends_on:
+      - webapi
+    networks:
+      - internal_network
 
 networks:
   internal_network:
