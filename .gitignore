@@ -21,3 +21,40 @@ QuoteHuntWebAPI/QuoteHuntWebAPI.DTO/QuoteHuntWebAPI.DTO.csproj.user
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/bin/
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/obj/
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/QuoteHuntWebAPI.Services.csproj.user
+
+# Compiled output
+QuoteHuntWebSite/dist
+QuoteHuntWebSite/tmp
+QuoteHuntWebSite/out-tsc
+QuoteHuntWebSite/bazel-out
+
+# Node
+QuoteHuntWebSite/node_modules
+QuoteHuntWebSite/npm-debug.log
+QuoteHuntWebSite/yarn-error.log
+
+# IDEs and editors
+QuoteHuntWebSite/.idea/
+QuoteHuntWebSite/.project
+QuoteHuntWebSite/.classpath
+QuoteHuntWebSite/.c9/
+QuoteHuntWebSite/*.launch
+QuoteHuntWebSite/.settings/
+QuoteHuntWebSite/*.sublime-workspace
+
+# Visual Studio Code
+QuoteHuntWebSite/.vscode
+QuoteHuntWebSite/.history
+
+# Miscellaneous
+QuoteHuntWebSite/.angular/cache
+QuoteHuntWebSite/.sass-cache/
+QuoteHuntWebSite/connect.lock
+QuoteHuntWebSite/coverage
+QuoteHuntWebSite/libpeerconnection.log
+QuoteHuntWebSite/testem.log
+QuoteHuntWebSite/typings
+
+# System files
+QuoteHuntWebSite/.DS_Store
+QuoteHuntWebSite/Thumbs.db
