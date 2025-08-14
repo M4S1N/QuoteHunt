@@ -37,7 +37,7 @@
       mat-raised-button
       color="primary"
       (click)="changePage(-1)"
-      [disabled]="requestForm.controls.page.value === '1' || (loading$ | async)">
+      [disabled]="prevDisabled$ | async">
       Previous
     </button>
 
@@ -47,7 +47,7 @@
       mat-raised-button
       color="primary"
       (click)="changePage(1)"
-      [disabled]="quotes.length < 10 || (loading$ | async)">
+      [disabled]="nextDisabled$ | async">
       Next
     </button>
   </div>

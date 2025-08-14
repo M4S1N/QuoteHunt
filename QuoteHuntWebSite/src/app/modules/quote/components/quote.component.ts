@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { QuoteCardComponent } from './quote-card/quote-card.component';
-import { map, merge, shareReplay, startWith, Subject, switchMap } from 'rxjs';
+import { combineLatest, map, merge, shareReplay, startWith, Subject, switchMap } from 'rxjs';
 import { QuoteService } from '../services/quote.service';
 import { fadeIn, fadeInCard, fadeInContainer } from '@shared/animations/animations';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,7 +51,18 @@ export class QuoteComponent {
   readonly loading$ = merge(
     this.quoteSearchSubject$.pipe(map(_ => true)),
     this.quotes$.pipe(map(_ => false)),
-  ).pipe(startWith(false));
+  ).pipe(startWith(true));
+
+  readonly prevDisabled$ = this.loading$.pipe(
+    map(loading => loading || this.requestForm.controls.page.value === '1')
+  );
+
+  readonly nextDisabled$ = combineLatest([
+    this.quotes$,
+    this.loading$
+  ]).pipe(
+    map(([quotes, loading]) => (quotes.length < 10) || loading)
+  );
 
   constructor (
     private readonly quoteService: QuoteService
