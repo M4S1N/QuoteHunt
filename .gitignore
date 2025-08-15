@@ -21,6 +21,9 @@ QuoteHuntWebAPI/QuoteHuntWebAPI.DTO/QuoteHuntWebAPI.DTO.csproj.user
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/bin/
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/obj/
 QuoteHuntWebAPI/QuoteHuntWebAPI.Services/QuoteHuntWebAPI.Services.csproj.user
+QuoteHuntWebAPI/QuoteHuntWebAPI.UnitTest/bin/
+QuoteHuntWebAPI/QuoteHuntWebAPI.UnitTest/obj/
+QuoteHuntWebAPI/QuoteHuntWebAPI.UnitTest/QuoteHuntWebAPI.UnitTest.csproj.user
 
 # Compiled output
 QuoteHuntWebSite/dist

@@ -31,7 +31,7 @@ namespace QuoteHuntWebAPI.Services
                 var quotes = await response.Content.ReadFromJsonAsync<List<QuoteDTO>>(cancellationToken: cancellationToken);
                 return quotes ?? Enumerable.Empty<QuoteDTO>();
             }
-            catch (OperationCanceledException oce) when (!cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
                 _logger.LogWarning("Request timed out while getting quotes.");
                 return [];
