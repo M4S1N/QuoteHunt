@@ -42,9 +42,9 @@ namespace QuoteHuntWebAPI.UnitTest
         {
             // Arrange
             var expectedQuotes = new List<QuoteDTO>
-        {
-            new QuoteDTO { Author = "Test Author", Text = "Test Quote" }
-        };
+            {
+                new QuoteDTO { Author = "Test Author", Text = "Test Quote" }
+            };
 
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {
