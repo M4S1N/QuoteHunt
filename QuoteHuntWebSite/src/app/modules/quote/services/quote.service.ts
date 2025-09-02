@@ -1,10 +1,11 @@
-import { Injectable, Injector } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BaseService } from "@core/services/base.service";
 import { UrlService } from "app/config/api-url";
 import { Quote } from "@shared/models/quote.model";
 import { catchError, map, Observable, tap } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { environment } from "environments/environment";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root"
@@ -14,11 +15,11 @@ export class QuoteService extends BaseService {
   private readonly environment = environment
 
   constructor(
-    injector: Injector,
+    http: HttpClient,
     private readonly urlService: UrlService,
-    private readonly snackBar: MatSnackBar,
+    private readonly snackBar: MatSnackBar
   ) {
-    super(injector);
+    super(http);
   }
 
   getQuotes(page: string | null | undefined, tag: string | null | undefined): Observable<Quote[]> {
