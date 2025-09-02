@@ -6,14 +6,10 @@ import { Observable } from "rxjs";
 export abstract class BaseService {
 
     protected apiUrl = environment.apiUrl;
-    
-    protected http: HttpClient;
 
     protected constructor(
-        protected injector: Injector
-    ) {
-        this.http = this.injector.get(HttpClient);
-    }
+        protected http: HttpClient
+    ) { }
 
     protected getHeaders(): HttpHeaders {
         return new HttpHeaders();
