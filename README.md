@@ -2,35 +2,35 @@
 
 ## 1. Introduction
 
-This project consists of three main services:
+This project consists of two main services:
 
 * **QuoteHuntWebSite (Frontend)**: Angular web application for users to search and view quotes.
-* **QuoteHuntScraper**: .NET service responsible for scraping quotes from the source website.
-* **QuoteHuntWebAPI**: ASP.NET Core Web API that exposes endpoints to query quotes, leveraging the Scraper service and caching results using Redis.
+* **QuoteHuntWebAPI**: ASP.NET Core Web API that exposes endpoints to query quotes. It includes:
+  * **ScraperService**: runs in the background, scrapes quotes from the source website, and caches them in Redis.
+  * Redis caching to minimize scraping load and improve API performance.
 
-The goal is to provide a performant API and user interface for quotes retrieval, with caching to minimize scraping load.
+The goal is to provide a performant API and user interface for quotes retrieval, with automated background scraping.
 
 ---
 
 ## 2. Architecture Overview
 
 ```plaintext
-+-------------------+     HTTP     +----------------+     HTTP     +------------------+    HTTP    +----------------+
-|   Frontend (UI)   | <----------> | QuoteHunt API  | <----------> | QuoteHuntScraper | <--------> | Quotes Source  |
-| (Angular Website) |              | (WebAPI)       |              | (.NET)           |            | (External)     |
-+-------------------+              +----------------+              +------------------+            +----------------+
-                                         |
-                                         |
-                                         v
-                                    +----------+
-                                    |  Redis   |
-                                    +----------+
-```
++-------------------+     HTTP     +-------------'---+     Background/Redis   +------------------+
+|   Frontend (UI)   | <----------> | QuoteHunt API   | <--------------------> | Quotes Source    |
+| (Angular Website) |              | (.NET + Scraper)|                        | (External)       |
++-------------------+              +---------------'-+                        +------------------+
+                                            |
+                                            v
+                                      +----------+
+                                      |  Redis   |
+                                      +----------+
+````
 
-* The Frontend communicates with the WebAPI via HTTP.
-* The WebAPI calls ScraperClient via HTTP.
-* Redis caches the results with configurable TTL (default 5 minutes).
-* Cache check is performed before scraping.
+* Frontend communicates with the WebAPI via HTTP.
+* ScraperService runs in the background inside WebAPI, fetching quotes periodically.
+* Redis caches the quotes with a configurable TTL (default 5 minutes).
+* API queries Redis first before attempting a scrape.
 
 ---
 
@@ -39,26 +39,22 @@ The goal is to provide a performant API and user interface for quotes retrieval,
 ### QuoteHuntWebSite (Frontend)
 
 * Written in Angular.
-* Provides a user interface for searching, filtering, and viewing quotes.
+* Provides a UI for searching, filtering, and viewing quotes.
 * Communicates with the WebAPI via REST endpoints.
 * Dockerized for deployment.
 * Configuration via environment files (`src/environments/`).
 
-### QuoteHuntScraper
-
-* Written in C# (.NET 8).
-* Exposes endpoints that perform scraping of quotes, paginated and filterable by tag.
-* Uses HttpClient internally.
-* Configurable scraper base URL.
-
 ### QuoteHuntWebAPI
 
 * Written in ASP.NET Core.
-* Contains `QuoteService` that integrates:
-  * `ScraperClient` for getting quotes.
-  * Redis cache with TTL.
+* Integrates the **ScraperService**, which:
+
+  * Runs in the background.
+  * Scrapes quotes paginated and optionally filtered by tag.
+  * Stores results in Redis.
+* `QuoteService` provides API endpoints to retrieve quotes, checking Redis cache first.
 * Controller exposes endpoints like `GET /api/Quote?page={page}&tag={tag}`.
-* Configuration options for enabling/disabling Redis caching.
+* Configurable Redis caching and scraping interval.
 
 ---
 
@@ -71,6 +67,7 @@ The goal is to provide a performant API and user interface for quotes retrieval,
 * ASP.NET Core Web API
 * StackExchange.Redis client library
 * Docker and Docker Compose for containerization
+* Selenium (headless) for scraping
 
 ### 4.2 API Endpoints
 
@@ -99,9 +96,6 @@ public class QuoteDTO
 
 ```json
 {
-  "ScraperSettings": {
-    "ScraperUrl": "http://quotehunt.webscraper:5033"
-  },
   "Redis": {
     "Host": "quotehunt.redis",
     "Port": 6379,
@@ -119,7 +113,7 @@ public class QuoteDTO
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5208/api/Quotes'
+  apiUrl: 'http://localhost:5208/api'
 };
 ```
 
@@ -129,13 +123,13 @@ export const environment = {
 
 ### Prerequisites
 
-- .NET SDK 8
-- Node.js & Angular CLI (for frontend)
-- Docker and Docker Compose
+* .NET SDK 8
+* Node.js & Angular CLI
+* Docker and Docker Compose
 
 ### Running the Services with Docker Compose
 
-To run the entire stack (Redis, WebScraper, WebAPI, and Frontend) locally using Docker Compose, execute the following command in the root folder containing the `docker-compose.yml`:
+To run the entire stack (Redis, WebAPI with Scraper, and Frontend) locally:
 
 ```bash
 docker-compose up --build
@@ -143,70 +137,40 @@ docker-compose up --build
 
 This will start:
 
-* **Redis** on an internal network (not exposed to host).
-* **QuoteHuntScraper** on an internal network (not exposed to host).
-* **QuoteHuntWebAPI** service connected to Redis and exposed on port `5208` on your localhost.
+* **Redis** exposed on port `6379`.
+* **QuoteHuntWebAPI** with integrated background scraper, connected to Redis, exposed on port `5208`.
 * **QuoteHuntWebSite** (Angular) exposed on port `4200`.
 
 ### Accessing the Application
 
-- **Frontend:** [http://localhost:4200](http://localhost:4200)
-- **API (Swagger):** [http://localhost:5208/swagger](http://localhost:5208/swagger)
+* **Frontend:** [http://localhost:4200](http://localhost:4200)
+* **API (Swagger):** [http://localhost:5208/swagger](http://localhost:5208/swagger)
 
-### Running Services Individually (Optional)
+### Running Services Individually
 
-If you prefer to run services individually for development:
-
-* **Run Redis**
+* **Run Redis**:
 
 ```bash
 docker-compose up --build redis
 ```
 
-* **Run QuoteHuntScraper**
-
-```bash
-docker-compose up --build webscraper
-```
-
-* **Run QuoteHuntWebAPI**
+* **Run WebAPI with Scraper**:
 
 ```bash
 docker-compose up --build webapi
 ```
 
-* **Run QuoteHuntWebSite**
+* **Run Frontend**:
 
 ```bash
 docker-compose up --build website
 ```
 
-Ensure the scraper and API connect to Redis at `quotehunt.redis:6379`.
-
-Make sure `appsettings.json` or environment variables include:
-
-```json
-{
-  "Redis": {
-    "Host": "quotehunt.redis",
-    "Port": 6379
-  },
-  "ScraperSettings": {
-    "ScraperUrl": "http://quotehunt.webscraper:5033"
-  }
-}
-```
+Ensure `appsettings.json` or environment variables point to Redis at `quotehunt.redis:6379`.
 
 ---
 
 ## 7. Deployment and Docker
-
-For deployment, use the provided `docker-compose.yml` that defines:
-
-* Redis service (internal, with optional volume for persistence)
-* QuoteHuntScraper service
-* QuoteHuntWebAPI service
-* QuoteHuntWebSite (Angular frontend)
 
 Example `docker-compose.yml` snippet:
 
@@ -219,15 +183,6 @@ services:
     container_name: quotehunt.redis
     networks:
       - internal_network
-
-  webscraper:
-    build:
-      context: ./QuoteHuntScraper
-    container_name: quotehunt.webscraper
-    networks:
-      - internal_network
-    depends_on:
-      - redis
 
   webapi:
     build:
@@ -254,8 +209,6 @@ networks:
   internal_network:
     driver: bridge
 ```
-
-Make sure to configure environment variables inside your containers or via Docker Compose as needed to point to Redis and scraper URLs.
 
 ---
 
