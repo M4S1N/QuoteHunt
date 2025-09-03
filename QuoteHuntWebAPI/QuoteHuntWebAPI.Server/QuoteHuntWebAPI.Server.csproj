@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QuoteHuntWebAPI.DTO\QuoteHuntWebAPI.DTO.csproj" />
+    <ProjectReference Include="..\QuoteHuntWebAPI.Services\QuoteHuntWebAPI.Services.csproj" />
+  </ItemGroup>
+
+</Project>

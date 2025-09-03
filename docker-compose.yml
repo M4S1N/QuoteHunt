@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  webscraper:
+    build:
+      context: ./QuoteHuntScraper
+    container_name: quotehunt.webscraper
+    networks:
+      - internal_network
+    depends_on:
+      - redis
+
+  webapi:
+    build:
+      context: ./QuoteHuntWebAPI
+    container_name: quotehunt.webapi
+    ports:
+      - "5208:5208"
+    networks:
+      - internal_network
+    depends_on:
+      - redis
+  
+  redis:
+    image: redis:latest
+    container_name: quotehunt.redis
+    environment:
+      - REDIS_HOST=quotehunt.redis
+      - REDIS_PORT=6379
+    networks:
+      - internal_network
+  
+  website:
+    build: ./QuoteHuntWebSite
+    container_name: quotehunt.website
+    ports:
+      - "4200:80"
+    depends_on:
+      - webapi
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge

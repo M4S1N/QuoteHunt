@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7a1912cc-20d7-40aa-aeaa-48cf25faa317</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QuoteHuntWebAPI.DTO\QuoteHuntWebAPI.DTO.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,35 @@
+.app-header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #03054dd5;
+  color: white;
+  z-index: 10;
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100px;
+    width: auto;
+
+    svg {
+        height: 100%;
+        font-weight: bold;
+    }
+
+    .app-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  }
+
+  .header-extra p {
+    margin: 0;
+    text-align: right;
+    font-size: 1.125rem;
+    font-style: italic;
+  }
+}
