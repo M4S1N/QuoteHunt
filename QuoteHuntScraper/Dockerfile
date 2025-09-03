@@ -1,3 +1,12 @@
+# Stage 0: Test
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
+WORKDIR /src
+COPY . ./
+
+WORKDIR /src/QuoteHuntScraper.UnitTest
+RUN dotnet restore
+RUN dotnet test
+
 # Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

@@ -18,7 +18,7 @@ describe("QuoteService", () => {
 
     urlServiceStub = {
       getQuote: (page?: string | null, tag?: string | null): string => {
-        let url = `/api/Quote`;
+        let url = `/Quote`;
         if (!!page) {
             url += `?page=${page}`;
         }
@@ -54,7 +54,7 @@ describe("QuoteService", () => {
       expect(quotes).toEqual(mockQuotes);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/api/Quote?page=1&tag=tag1`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/Quote?page=1&tag=tag1`);
     expect(req.request.method).toBe("GET");
 
     req.flush(mockQuotes);
@@ -71,7 +71,7 @@ describe("QuoteService", () => {
       expect(quotes).toEqual([]);
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/api/Quote?page=1&tag=tag1`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/Quote?page=1&tag=tag1`);
     req.flush("Error loading", { status: 500, statusText: "Server Error" });
 
     const actualError = snackBarSpy.open.calls.mostRecent()?.args[1];

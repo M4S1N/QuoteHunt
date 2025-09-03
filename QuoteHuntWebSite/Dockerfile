@@ -1,3 +1,12 @@
+# Stage 0 - Run Tests
+FROM node:20 as test
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+RUN npm test -- --watch=false
+
 # Stage 1 - Build Angular
 FROM node:20 as build
 WORKDIR /app

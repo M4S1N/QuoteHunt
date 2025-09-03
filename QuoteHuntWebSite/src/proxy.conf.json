@@ -1,6 +1,6 @@
 {
 	"/api": {
-		"target": "http://quotehuntwebapi:5208",
+		"target": "http://quotehunt.webapi:5208/api",
 		"secure": false,
 		"changeOrigin": true,
 		"logLevel": "debug"
