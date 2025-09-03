@@ -1,3 +1,5 @@
+using QuoteHuntScraper.Services;
+using QuoteHuntScraper.Services.Interfaces;
 using QuoteHuntWebAPI.DTO;
 using QuoteHuntWebAPI.Services;
 using QuoteHuntWebAPI.Services.Interfaces;
@@ -25,6 +27,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ScraperSetting>(builder.Configuration.GetSection("ScraperSettings"));
 builder.Services.Configure<RedisSetting>(builder.Configuration.GetSection("Redis"));
 
+builder.Services.Configure<ScraperSetting>(options =>
+{
+    options.Url = builder.Configuration["SCRAPER_URL"] ?? string.Empty;
+    options.Username = builder.Configuration["SCRAPER_USERNAME"] ?? "user";
+    options.Password = builder.Configuration["SCRAPER_PASSWORD"] ?? "password";
+});
 if (builder.Configuration.GetValue<bool>("Redis:UseRedis"))
 {
     var redisHost = builder.Configuration.GetValue<string>("Redis:Host");
@@ -35,9 +43,10 @@ if (builder.Configuration.GetValue<bool>("Redis:UseRedis"))
 }
 
 #region Services
-builder.Services.AddHttpClient<ScraperClient>();
-builder.Services.AddScoped<IScraperClient, ScraperClient>();
+builder.Services.AddHostedService<ScraperBackgroundService>();
+builder.Services.AddScoped<IScraperService, ScraperService>();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
+builder.Services.AddScoped<IWebDriverFactory, WebDriverFactory>();
 #endregion
 
 var app = builder.Build();

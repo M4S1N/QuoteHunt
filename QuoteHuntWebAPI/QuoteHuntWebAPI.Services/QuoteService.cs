@@ -1,44 +1,68 @@
-﻿using QuoteHuntWebAPI.DTO;
+﻿using Microsoft.Extensions.Options;
+using NUlid;
+using QuoteHuntScraper.Services.Interfaces;
+using QuoteHuntWebAPI.DTO;
 using QuoteHuntWebAPI.Services.Interfaces;
 using StackExchange.Redis;
-using System.Text.Json;
-using Microsoft.Extensions.Options;
 
 namespace QuoteHuntWebAPI.Services
 {
     public class QuoteService(
         ILogger<QuoteService> logger,
-        IScraperClient scraperClient,
+        IScraperService scraperService,
         IOptions<RedisSetting> redisSettings,
+        IWebDriverFactory webDriverFactory,
         IConnectionMultiplexer? redis = null
     ) : IQuoteService
     {
         public readonly ILogger<QuoteService> _logger = logger;
-        public readonly IScraperClient _scraperClient = scraperClient;
+        public readonly IScraperService _scraperService = scraperService;
         public readonly IDatabase? _redis = redis?.GetDatabase();
         public readonly RedisSetting _redisSettings = redisSettings.Value;
+        private readonly IWebDriverFactory _webDriverFactory = webDriverFactory;
 
         public async Task<IEnumerable<QuoteDTO>> GetQuotesAsync(int page, string tag, CancellationToken cancellationToken = default)
         {
-            if (!_redisSettings.UseRedis)
+            if (_redis != null)
             {
-                return await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
+                var quotes = new List<QuoteDTO>();
+                IEnumerable<RedisValue> quoteKeys;
+
+                if (string.IsNullOrEmpty(tag))
+                {
+                    var server = _redis.Multiplexer.GetServer(_redis.Multiplexer.GetEndPoints().First());
+                    quoteKeys = [.. server.Keys(pattern: "quote:*").Select(k => (RedisValue)k.ToString())];
+                }
+                else
+                {
+                    quoteKeys = await _redis.SetMembersAsync($"tag:{tag}");
+                }
+
+                var skip = (page - 1) * 10;
+                var pageKeys = quoteKeys.Skip(skip).Take(10);
+
+                foreach (var key in pageKeys)
+                {
+                    var entries = await _redis.HashGetAllAsync(key.ToString()!);
+                    if (entries.Length == 0) continue;
+
+                    quotes.Add(new QuoteDTO
+                    {
+                        Id = Ulid.Parse(entries.First(e => e.Name == "Id").Value!),
+                        Text = entries.FirstOrDefault(e => e.Name == "Text").Value!,
+                        Author = entries.FirstOrDefault(e => e.Name == "Author").Value!,
+                        Tags = entries.FirstOrDefault(e => e.Name == "Tags").Value!.ToString()!.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    });
+                }
+
+                return quotes;
             }
-
-            string cacheKey = $"quotes:page:{page}:tag:{tag}";
-
-            var cached = await _redis?.StringGetAsync(cacheKey);
-            if (cached.HasValue)
+            else
             {
-                return JsonSerializer.Deserialize<IEnumerable<QuoteDTO>>(cached!);
+                using var driver = _webDriverFactory.CreateWebDriver();
+                _scraperService.Login(driver);
+                return await _scraperService.ScrapeQuotes(driver, page, tag);
             }
-
-            var quotes = await _scraperClient.GetQuotesAsync(page, tag, cancellationToken);
-
-            var serialized = JsonSerializer.Serialize(quotes);
-            await _redis?.StringSetAsync(cacheKey, serialized, TimeSpan.FromSeconds(_redisSettings.CacheTTLSeconds));
-
-            return quotes;
         }
     }
 }

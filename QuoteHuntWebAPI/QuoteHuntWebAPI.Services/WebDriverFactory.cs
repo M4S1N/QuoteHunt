@@ -4,7 +4,7 @@ using QuoteHuntScraper.Services.Interfaces;
 
 namespace QuoteHuntScraper.Services
 {
-    public class WebDriverFactory: IWebDriverFactory
+    public class WebDriverFactory : IWebDriverFactory
     {
         /// <summary>
         /// Creates a new instance of the ChromeDriver with specified options.

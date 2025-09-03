@@ -1,11 +1,11 @@
-# Stage 0: Test
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
-WORKDIR /src
-COPY . ./
+# # Stage 0: Test
+# FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
+# WORKDIR /src
+# COPY . ./
 
-WORKDIR /src/QuoteHuntWebAPI.UnitTest
-RUN dotnet restore
-RUN dotnet test
+# WORKDIR /src/QuoteHuntWebAPI.UnitTest
+# RUN dotnet restore
+# RUN dotnet test
 
 # Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

@@ -10,7 +10,7 @@ namespace QuoteHuntWebAPI.UnitTest
 {
     public class ScraperClientTest
     {
-        private static ScraperClient CreateScraperClient(HttpResponseMessage response)
+        private static ScraperService CreateScraperClient(HttpResponseMessage response)
         {
             var handlerMock = new Mock<HttpMessageHandler>();
             handlerMock.Protected()
@@ -23,14 +23,14 @@ namespace QuoteHuntWebAPI.UnitTest
 
             var httpClient = new HttpClient(handlerMock.Object);
 
-            var loggerMock = new Mock<ILogger<ScraperClient>>();
+            var loggerMock = new Mock<ILogger<ScraperService>>();
             var optionsMock = new Mock<IOptions<ScraperSetting>>();
             optionsMock.Setup(o => o.Value).Returns(new ScraperSetting
             {
                 ScraperUrl = "https://fake-scraper.test/"
             });
 
-            return new ScraperClient(
+            return new ScraperService(
                 loggerMock.Object,
                 httpClient,
                 optionsMock.Object
@@ -76,14 +76,14 @@ namespace QuoteHuntWebAPI.UnitTest
                 .ThrowsAsync(new TaskCanceledException()); // Simula timeout
 
             var httpClient = new HttpClient(handlerMock.Object);
-            var loggerMock = new Mock<ILogger<ScraperClient>>();
+            var loggerMock = new Mock<ILogger<ScraperService>>();
             var optionsMock = new Mock<IOptions<ScraperSetting>>();
             optionsMock.Setup(o => o.Value).Returns(new ScraperSetting
             {
                 ScraperUrl = "https://fake-scraper.test/"
             });
 
-            var client = new ScraperClient(
+            var client = new ScraperService(
                 loggerMock.Object,
                 httpClient,
                 optionsMock.Object

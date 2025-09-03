@@ -1,15 +1,6 @@
 version: '3.8'
 
 services:
-  webscraper:
-    build:
-      context: ./QuoteHuntScraper
-    container_name: quotehunt.webscraper
-    networks:
-      - internal_network
-    depends_on:
-      - redis
-
   webapi:
     build:
       context: ./QuoteHuntWebAPI
@@ -27,6 +18,8 @@ services:
     environment:
       - REDIS_HOST=quotehunt.redis
       - REDIS_PORT=6379
+    ports:
+      - "6379:6379"
     networks:
       - internal_network
   

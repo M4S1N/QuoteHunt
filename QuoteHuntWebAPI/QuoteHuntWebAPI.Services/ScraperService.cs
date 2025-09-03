@@ -1,10 +1,9 @@
-﻿using OpenQA.Selenium;
+﻿using Microsoft.Extensions.Options;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using QuoteHuntWebAPI.DTO;
+using QuoteHuntWebAPI.Services.Interfaces;
 using SeleniumExtras.WaitHelpers;
-using Microsoft.Extensions.Options;
-
-using QuoteHuntScraper.DTO;
-using QuoteHuntScraper.Services.Interfaces;
 
 namespace QuoteHuntScraper.Services
 {

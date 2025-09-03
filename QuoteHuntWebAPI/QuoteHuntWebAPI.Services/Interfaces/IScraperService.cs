@@ -1,7 +1,7 @@
-﻿using OpenQA.Selenium;
-using QuoteHuntScraper.DTO;
+﻿using QuoteHuntWebAPI.DTO;
+using OpenQA.Selenium;
 
-namespace QuoteHuntScraper.Services.Interfaces
+namespace QuoteHuntWebAPI.Services.Interfaces
 {
     public interface IScraperService
     {
