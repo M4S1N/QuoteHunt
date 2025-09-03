@@ -19,7 +19,7 @@ namespace QuoteHuntWebAPI.UnitTest
             var optionsMock = new Mock<IOptions<ScraperSetting>>();
             optionsMock.Setup(o => o.Value).Returns(new ScraperSetting
             {
-                ScraperUrl = "https://fake-scraper.test/"
+                Url = "https://fake-url.test/"
             });
 
             return new QuoteController(

@@ -26,7 +26,7 @@ namespace QuoteHuntWebAPI.Server.Controllers
         {
             try
             {
-                _logger.LogInformation("Fetching quotes from scraper at {ScraperUrl}", _scraperSetting.ScraperUrl);
+                _logger.LogInformation("Fetching quotes from scraper at {ScraperUrl}", _scraperSetting.Url);
                 
                 var quotes = await _quoteService.GetQuotesAsync(page, tag, cancellationToken);
                 

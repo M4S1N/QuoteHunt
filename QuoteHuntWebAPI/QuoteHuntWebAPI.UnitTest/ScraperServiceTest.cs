@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Options;
 using Moq;
 using OpenQA.Selenium;
-using QuoteHuntScraper.DTO;
 using QuoteHuntScraper.Services;
+using QuoteHuntWebAPI.DTO;
 using System.Collections.ObjectModel;
 using Xunit;
 
-namespace QuoteHuntScraper.UnitTest
+namespace QuoteHuntWebAPI.UnitTest
 {
-    public class ScraperServiceTest
+    public class ScraperServiceTests
     {
         private static ScraperService CreateService()
         {

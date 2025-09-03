@@ -16,7 +16,10 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5208",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SCRAPER_URL": "https://quotes.toscrape.com",
+        "SCRAPER_USERNAME": "user",
+        "SCRAPER_PASSWORD": "password"
       }
     },
     "https": {
@@ -26,7 +29,10 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7156;http://localhost:5208",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SCRAPER_URL": "https://quotes.toscrape.com",
+        "SCRAPER_USERNAME": "user",
+        "SCRAPER_PASSWORD": "password"
       }
     },
     "IIS Express": {
@@ -34,7 +40,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SCRAPER_URL": "https://quotes.toscrape.com",
+        "SCRAPER_USERNAME": "user",
+        "SCRAPER_PASSWORD": "password"
       }
     }
   }
